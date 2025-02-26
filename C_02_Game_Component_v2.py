@@ -102,6 +102,18 @@ class Play:
     def __init__(self, how_many):
         self.play_box = Toplevel()
 
+        # Integers / String Variables
+        self.target_score = IntVar()
+
+        # rounds played - starts with zero
+        self.rounds_played = IntVar()
+        self.rounds_played.set(0)
+
+        self.rounds_wanted = IntVar()
+        self.rounds_wanted.set(how_many)
+
+        self.play_box = Toplevel()
+
         self.game_frame = Frame(self.play_box)
         self.game_frame.grid(padx=10, pady=10)
 
@@ -163,6 +175,20 @@ class Play:
             make_control_button.grid(row=item[5], column=item[6], padx=5, pady=5)
 
             control_ref_list.append(make_control_button)
+
+        # Once interface has been created, invoke new round function for first round.
+        self.new_round()
+
+    def new_round(self):
+        """
+        Chooses four colours, works out median for score to beat.
+        Configures button with chosen colours.
+        """
+
+        # retrieve number of rounds played, add one to it and configure heading
+        rounds_played = self.rounds_played.get()
+        rounds_played += 1
+        self.rounds_played.set(rounds_played)
 
     def close_play(self):
         # reshow root and end current
