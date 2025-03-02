@@ -155,7 +155,8 @@ class Play:
         # create four buttons in a 2 x 2 grid
         for item in range(0, 4):
             self.colour_button = Button(self.colour_frame, font=("Arial", "12"),
-                                        text="Colour Name", width=15)
+                                        text="Colour Name", width=15,
+                                        command=partial(self.round_results, item))
             self.colour_button.grid(row=item // 2,
                                     column=item % 2,
                                     padx=5, pady=5)
@@ -184,6 +185,11 @@ class Play:
             make_control_button.grid(row=item[5], column=item[6], padx=5, pady=5)
 
             control_ref_list.append(make_control_button)
+
+        # Retrieve next, stats and end button so that they can be configured
+        self.next_button = control_ref_list[0]
+        self.stats_button = control_ref_list[2]
+        self.end_game_button = control_ref_list[3]
 
         # Once interface has been created, invoke new round function for first round.
         self.new_round()
@@ -219,6 +225,16 @@ class Play:
         for count, item in enumerate(self.colour_button_ref):
             item.config(fg=self.round_colour_list[count][2], bg=self.round_colour_list[count][0],
                         text=self.round_colour_list[count][0], state=NORMAL)
+
+        self.next_button.config(state=DISABLED)
+
+
+    def round_results(self, user_choice):
+        """
+
+        :param user_choice:
+        :return:
+        """
 
     def close_play(self):
         # reshow root and end current
