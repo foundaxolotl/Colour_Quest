@@ -260,6 +260,7 @@ class Play:
 
         # Chicken Image
         self.chicken_image = PhotoImage(file="chicken_smaller.png")
+        self.thumbs_image = PhotoImage(file="thumbs_up_3.png")
 
         self.end_game_button.config(text="End Game", image=self.chicken_image,
                                     compound="right", width=280)
@@ -340,7 +341,8 @@ class Play:
 
         if rounds_played == rounds_wanted:
             self.next_button.config(state=DISABLED, text="Game Over")
-            self.end_game_button.config(text="Play Again", bg="#006600")
+            self.end_game_button.config(text="Play Again", bg="#006600", image=self.thumbs_image,
+                                        compound="right", width=200)
 
         for item in self.colour_button_ref:
             item.config(state=DISABLED)
