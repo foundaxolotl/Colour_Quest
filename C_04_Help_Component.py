@@ -77,10 +77,10 @@ class DisplayHints:
     Displays hints for Colour Quest Game
     """
 
-    def __int__(self, partner):
+    def __init__(self, partner):
         # setup dialogue box
         background = "#ffe6cc"
-        self.hint_box = Toplevel
+        self.hint_box = Toplevel()
 
         # disable hint button
         partner.hints_button.config(state=DISABLED)
