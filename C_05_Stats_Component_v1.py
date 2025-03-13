@@ -52,6 +52,16 @@ class Play:
     def __init__(self, how_many):
         self.rounds_won = IntVar()
 
+        # lists for stats component
+
+        # self.all_scores_list = [20, 20, 20, 16, 19]
+        # self.all_high_score_list = [20, 20, 20, 16, 19]
+        # self.rounds_won.set(5)
+
+        # self.all_scores_list = [0, 0, 0, 0, 0]
+        # self.all_high_score_list = [ 20, 20, 20, 16, 19]
+        # self.rounds_won.set(0)
+
         # Random Score test Data....
         self.all_scores_list = [0, 15, 16, 0, 16]
         self.all_high_score_list = [20, 19, 18, 20, 20]
@@ -67,7 +77,7 @@ class Play:
         self.heading_label.grid(row=0)
 
         self.stats_button = Button(self.game_frame, font=("Arial", "14", "bold"),
-                                   text="Hints", width=15, fg="#FFFFFF",
+                                   text="Stats", width=15, fg="#FFFFFF",
                                    bg="#FF8000", padx=10, pady=10, command=self.to_stats)
         self.stats_button.grid(row=1)
 
@@ -86,7 +96,7 @@ class Play:
 
 class Stats:
     """
-    Displays hints for Colour Quest Game
+    Displays stats for Colour Quest Game
     """
 
     def __init__(self, partner, all_stats_info):
@@ -102,7 +112,7 @@ class Stats:
 
         # if users press cross at top, close help and release help button
         self.stats_box.protocol('WM_DELETE_WINDOW',
-                                partial(self.close_hint, partner))
+                                partial(self.close_stats, partner))
 
         self.stats_frame = Frame(self.stats_box, width=300)
         self.stats_frame.grid()
@@ -138,7 +148,7 @@ class Stats:
             best_score_string = f"Best Score: n/a"
         else:
             comment_string = ""
-            comment_colour = "F0F0F0"
+            comment_colour = "#F0F0F0"
 
         average_score_string = f"Average Score: {average_score:.0f}\n"
 
@@ -154,7 +164,7 @@ class Stats:
             [max_possible_string, normal_font, "W"],
             [comment_string, comment_font, "W"],
             ["\nRound Stats", heading_font, ""],
-            [best_score_string,normal_font, "W"],
+            [best_score_string, normal_font, "W"],
             [average_score_string, normal_font, "W"]
         ]
 
@@ -164,17 +174,26 @@ class Stats:
                                      anchor="w", justify="left",
                                      padx=30, pady=5)
             self.stats_label.grid(row=count, sticky=item[2], padx=10)
+            stats_label_ref_list.append(self.stats_label)
 
+        # Configure comment label background (for all won / all lost)
+        stats_comment_label = stats_label_ref_list[4]
+        stats_comment_label.config(bg=comment_colour)
 
+        self.dismiss_button = Button(self.stats_frame,
+                                     font=("Arial", "16", "bold"),
+                                     text="Dismiss", bg="#333333",
+                                     fg="#FFFFFF", width=20,
+                                     command=partial(self.close_stats,
+                                                     partner))
+        self.dismiss_button.grid(row=8, padx=10, pady=10)
 
+        # closes help dialogue (used by button and x at top of dialogue
 
-    def close_hint(self, partner):
-        """
-        Closes hint dialogue box (and enables hint button)
-        """
-        # put hint button back to normal
-        partner.hints_button.config(state=NORMAL)
-        self.hint_box.destroy()
+    def close_stats(self, partner):
+        # put stats button back to normal
+        partner.stats_button.config(state=NORMAL)
+        self.stats_box.destroy()
 
 
 # main routine
