@@ -191,6 +191,9 @@ class Play:
         self.game_frame = Frame(self.play_box)
         self.game_frame.grid(padx=10, pady=10)
 
+        # if users press the 'x' on the game window, end the entire game!
+        self.play_box.protocol('WM_DELETE_WINDOW', root.destroy)
+
         # body for most labels...
         body_font = ("Arial", "12")
 
