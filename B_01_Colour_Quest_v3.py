@@ -369,7 +369,6 @@ class Play:
 
         # code for when game ends
         if rounds_played == rounds_wanted:
-
             # work out success rate
             success_rate = rounds_won / rounds_played * 100
             success_string = (f"Success Rate: "
@@ -400,7 +399,10 @@ class Play:
         Displays hints for playing game
         :return:
         """
-        DisplayHints(self)
+        # check we have played at least one round so that
+        # stats button is not enabled in error.
+        rounds_played = self.rounds_played.get()
+        DisplayHints(self, rounds_played)
 
     def to_stats(self):
         """
@@ -415,12 +417,90 @@ class Play:
         Stats(self, stats_bundle)
 
 
+class DisplayHints:
+    """
+    Displays hints for Colour Quest Game
+    """
+
+    def __init__(self, partner, rounds_played):
+        self.rounds_played = rounds_played
+
+        background = "#ffe6cc"
+        self.hint_box = Toplevel()
+
+        # disable hint button
+        partner.hints_button.config(state=DISABLED)
+        partner.end_game_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
+
+        # if users press cross at top, close help and release help button
+        self.hint_box.protocol('WM_DELETE_WINDOW',
+                               partial(self.close_hint, partner))
+
+        self.hint_frame = Frame(self.hint_box, width=300,
+                                height=200)
+        self.hint_frame.grid()
+
+        self.hint_heading_label = Label(self.hint_frame,
+                                        text="Hints",
+                                        font=("Arial", "14", "bold"))
+        self.hint_heading_label.grid(row=0)
+
+        hint_text = "The score for each colour relates to it's hexadecimal code.\n" \
+                    "Remember, the hex code for white is #FFFFFF - which is the best\n" \
+                    "possible score.\n" \
+                    "\nThe hex code for black is #000000 which is the worst possible score\n" \
+                    "\nThe first colour in the code is red, so if you had to choose\n" \
+                    "between red (#FF0000), green(#00FF00) and blue (#0000FF), then\n" \
+                    "red would be the best choice.\n" \
+                    "\nGood luck!"
+
+        self.hint_text_label = Label(self.hint_frame,
+                                     text=hint_text, wraplength=350,
+                                     justify="left")
+        self.hint_text_label.grid(row=1, padx=10)
+
+        self.dismiss_button = Button(self.hint_frame,
+                                     font=("Arial", "12", "bold"),
+                                     text="Dismiss", bg="#CC6600",
+                                     fg="#FFFFFF",
+                                     command=partial(self.close_hint, partner))
+        self.dismiss_button.grid(row=2, padx=10, pady=10)
+
+        # list and loop to set background colour on everything except the buttons.
+        recolour_list = [self.hint_frame, self.hint_heading_label,
+                         self.hint_text_label]
+
+        for item in recolour_list:
+            item.config(bg=background)
+
+    def close_hint(self, partner):
+        """
+        Closes hint dialogue box (and enables hint button)
+        """
+        # put hint button back to normal
+        partner.hints_button.config(state=NORMAL)
+        partner.end_game_button.config(state=NORMAL)
+
+        # only enable stats button if we have played at least one round.
+        if self.rounds_played >= 1:
+            partner.stats_button.config(state=NORMAL)
+
+        self.hint_box.destroy()
+
+
 class Stats:
     """
         Displays stats for Colour Quest Game
         """
 
     def __init__(self, partner, all_stats_info):
+
+        # disable buttons to prevent program crashing
+        partner.hints_button.config(state=DISABLED)
+        partner.end_game_button.config(state=DISABLED)
+        partner.stats_button.config(state=DISABLED)
+
         # Extract information from master list...
         rounds_won = all_stats_info[0]
         user_scores = all_stats_info[1]
@@ -513,71 +593,10 @@ class Stats:
 
     def close_stats(self, partner):
         # put stats button back to normal
+        partner.hints_button.config(state=NORMAL)
+        partner.end_game_button.config(state=NORMAL)
         partner.stats_button.config(state=NORMAL)
         self.stats_box.destroy()
-
-
-class DisplayHints:
-    """
-    Displays hints for Colour Quest Game
-    """
-
-    def __init__(self, partner):
-        # setup dialogue box
-        background = "#ffe6cc"
-        self.hint_box = Toplevel()
-
-        # disable hint button
-        partner.hints_button.config(state=DISABLED)
-
-        # if users press cross at top, close help and release help button
-        self.hint_box.protocol('WM_DELETE_WINDOW',
-                               partial(self.close_hint, partner))
-
-        self.hint_frame = Frame(self.hint_box, width=300,
-                                height=200)
-        self.hint_frame.grid()
-
-        self.hint_heading_label = Label(self.hint_frame,
-                                        text="Hints",
-                                        font=("Arial", "14", "bold"))
-        self.hint_heading_label.grid(row=0)
-
-        hint_text = "The score for each colour relates to it's hexadecimal code.\n" \
-                    "Remember, the hex code for white is #FFFFFF - which is the best\n" \
-                    "possible score.\n" \
-                    "\nThe hex code for black is #000000 which is the worst possible score\n" \
-                    "\nThe first colour in the code is red, so if you had to choose\n" \
-                    "between red (#FF0000), green(#00FF00) and blue (#0000FF), then\n" \
-                    "red would be the best choice.\n" \
-                    "\nGood luck!"
-
-        self.hint_text_label = Label(self.hint_frame,
-                                     text=hint_text, wraplength=350,
-                                     justify="left")
-        self.hint_text_label.grid(row=1, padx=10)
-
-        self.dismiss_button = Button(self.hint_frame,
-                                     font=("Arial", "12", "bold"),
-                                     text="Dismiss", bg="#CC6600",
-                                     fg="#FFFFFF",
-                                     command=partial(self.close_hint, partner))
-        self.dismiss_button.grid(row=2, padx=10, pady=10)
-
-        # list and loop to set background colour on everything except the buttons.
-        recolour_list = [self.hint_frame, self.hint_heading_label,
-                         self.hint_text_label]
-
-        for item in recolour_list:
-            item.config(bg=background)
-
-    def close_hint(self, partner):
-        """
-        Closes hint dialogue box (and enables hint button)
-        """
-        # put hint button back to normal
-        partner.hints_button.config(state=NORMAL)
-        self.hint_box.destroy()
 
 
 # main routine
